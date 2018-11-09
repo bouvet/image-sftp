@@ -1,11 +1,9 @@
 from flask import Flask, request, Response
 import os
-import requests
 import logging
 import json
 import base64
 import pysftp
-import io
 
 
 app = Flask(__name__)
