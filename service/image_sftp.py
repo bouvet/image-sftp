@@ -25,25 +25,27 @@ logger.setLevel(logging.DEBUG)
 def path(path):
     logger.info(path)
     json_data = request.get_json()
-    for entity in json_data:
-        for k,v in entity.items():
-            if k == "employeenumber" and not None:
-                filename = v + ".png"
-            else:
-                pass
-            if k == "image":
-                img_data = v.encode()
-                logger.info("encoding image...")
-                # try disabling host key check
-                cnopts = pysftp.CnOpts()
-                cnopts.hostkeys = None
-                with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
-                    with sftp.open("/" + filename, mode="rwb") as remote_file:
-                        remote_file.write(base64.decodebytes(img_data))
+    if path == "decode":
+        for entity in json_data:
+            for k,v in entity.items():
+                if k == "employeenumber" and not None:
+                    filename = v + ".png"
+                else:
+                    pass
+                if k == "image":
+                    img_data = v.encode()
+                    logger.info("encoding image...")
+                    # try disabling host key check
+                    cnopts = pysftp.CnOpts()
+                    cnopts.hostkeys = None
+                    with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
+                        with sftp.open("/" + filename, mode="rwb") as remote_file:
+                            remote_file.write(base64.decodebytes(img_data))
 
-            else:
-                pass
-
+                else:
+                    pass
+    else:
+        return logger.info('no supported endpoint called')
 
     return Response(
         print("sent encoded images to sFTP"),
