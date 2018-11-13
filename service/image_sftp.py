@@ -4,6 +4,7 @@ import logging
 import json
 import base64
 import pysftp
+from paramiko import SSHClient, AutoAddPolicy
 
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ stdout_handler = logging.StreamHandler()
 stdout_handler.setFormatter(logging.Formatter(format_string))
 logger.addHandler(stdout_handler)
 logger.setLevel(logging.DEBUG)
+
 
 @app.route("/<path:path>", methods=["POST"])
 def path(path):
@@ -41,6 +43,7 @@ def path(path):
                     with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
                         with sftp.open("/" + filename, mode="rwb") as remote_file:
                             remote_file.write(base64.decodebytes(img_data))
+                            sftp.close()
 
                 else:
                     pass
