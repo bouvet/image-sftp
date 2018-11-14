@@ -4,7 +4,7 @@ COPY ./service /service
 
 RUN pip install --upgrade pip
 
-RUN pip install -r /service/requirements.txt
+RUN pip install -r ./service/requirements.txt
 
 EXPOSE 5000/tcp
 
