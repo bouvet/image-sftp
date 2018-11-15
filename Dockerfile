@@ -2,6 +2,9 @@ FROM python:3-alpine
 MAINTAINER Philip Ahlberg "philip.ahlberg@sesam.io"
 COPY ./service /service
 
+RUN apk update
+RUN apk add openssl-dev libffi-dev musl-dev gcc make
+
 RUN pip install --upgrade pip
 
 COPY ./service/requirements.txt /service/requirements.txt

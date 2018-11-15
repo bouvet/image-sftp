@@ -4,8 +4,6 @@ import logging
 import json
 import base64
 import pysftp
-from paramiko import SSHClient, AutoAddPolicy
-
 
 app = Flask(__name__)
 logger = None
