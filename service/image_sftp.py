@@ -38,11 +38,16 @@ def path(path):
                     # try disabling host key check
                     cnopts = pysftp.CnOpts()
                     cnopts.hostkeys = None
-                    with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
-                        with sftp.open("/" + filename, mode="rwb") as remote_file:
-                            remote_file.write(base64.decodebytes(img_data))
-                            sftp.close()
-
+                    try:
+                        with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
+                            try:
+                                with sftp.open("/" + filename, mode="rwb") as remote_file:
+                                    remote_file.write(base64.decodebytes(img_data))
+                                    sftp.close()
+                            except Exception as e:
+                                print(e.args)
+                    except Exception as e:
+                        print(e.args)
                 else:
                     pass
     else:
