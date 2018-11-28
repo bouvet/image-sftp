@@ -30,7 +30,7 @@ def decode():
                 filename = v + ".png"
             else:
                 pass
-            if k == "image" and "image" is not None:
+            if k == "image" and entity["image"] is not None:
                 img_data = v.encode()
                 logger.info("encoding image...")
                 # try disabling host key check
