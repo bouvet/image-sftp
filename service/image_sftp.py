@@ -26,11 +26,11 @@ def decode():
     json_data = request.get_json()
     for entity in json_data:
         for k,v in entity.items():
-            if k == "employeenumber" and not None:
+            if k == "employeenumber" and v is not None:
                 filename = v + ".png"
             else:
                 pass
-            if k == "image" and k is not None:
+            if k == "image" and v is not None:
                 img_data = v.encode()
                 logger.info("encoding image...")
                 # try disabling host key check
