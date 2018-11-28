@@ -21,37 +21,33 @@ logger.addHandler(stdout_handler)
 logger.setLevel(logging.DEBUG)
 
 
-@app.route("/<path:path>", methods=["POST"])
-def path(path):
-    logger.info(path)
+@app.route("/decode", methods=["POST"])
+def decode():
     json_data = request.get_json()
-    if path == "decode":
-        for entity in json_data:
-            for k,v in entity.items():
-                if k == "employeenumber" and not None:
-                    filename = v + ".png"
-                else:
-                    pass
-                if k == "image":
-                    img_data = v.encode()
-                    logger.info("encoding image...")
-                    # try disabling host key check
-                    cnopts = pysftp.CnOpts()
-                    cnopts.hostkeys = None
-                    try:
-                        with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
-                            try:
-                                with sftp.open("/" + filename, mode="rwb") as remote_file:
-                                    remote_file.write(base64.decodebytes(img_data))
-                                    sftp.close()
-                            except Exception as e:
-                                print(e.args)
-                    except Exception as e:
-                        print(e.args)
-                else:
-                    pass
-    else:
-        return logger.info('no supported endpoint called')
+    for entity in json_data:
+        for k,v in entity.items():
+            if k == "employeenumber" and not None:
+                filename = v + ".png"
+            else:
+                pass
+            if k == "image" and "image" is not None:
+                img_data = v.encode()
+                logger.info("encoding image...")
+                # try disabling host key check
+                cnopts = pysftp.CnOpts()
+                cnopts.hostkeys = None
+                try:
+                    with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
+                        try:
+                            with sftp.open("/" + filename, mode="rwb") as remote_file:
+                                remote_file.write(base64.decodebytes(img_data))
+                                sftp.close()
+                        except Exception as e:
+                            logger.error(e.args)
+                except Exception as e:
+                    logger.error(e.args)
+            else:
+                logger.info('no content in image')
 
     return Response(
         print("sent encoded images to sFTP"),
