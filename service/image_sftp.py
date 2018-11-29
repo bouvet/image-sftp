@@ -20,11 +20,13 @@ stdout_handler.setFormatter(logging.Formatter(format_string))
 logger.addHandler(stdout_handler)
 logger.setLevel(logging.DEBUG)
 
-
 @app.route("/decode", methods=["POST"])
 def decode():
-    json_data = request.get_json()
-    for entity in json_data:
+    entities = request.get_json()
+
+    logger.info("Received %s entities from Sesam", len(entities))
+
+    for entity in entities:
         for k,v in entity.items():
             if k == "employeenumber" and v is not None:
                 filename = v + ".png"
@@ -33,10 +35,10 @@ def decode():
             if k == "image" and v is not None:
                 img_data = v.encode()
                 logger.info("encoding image...")
-                # try disabling host key check
-                cnopts = pysftp.CnOpts()
-                cnopts.hostkeys = None
                 try:
+                    # try disabling host key check
+                    cnopts = pysftp.CnOpts()
+                    cnopts.hostkeys = None
                     with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
                         try:
                             with sftp.open("/" + filename, mode="rwb") as remote_file:
@@ -47,7 +49,7 @@ def decode():
                 except Exception as e:
                     logger.error(e.args)
             else:
-                logger.info('no content in image')
+                logger.info('no content in image, passing')
 
     return Response(
         print("sent encoded images to sFTP"),
