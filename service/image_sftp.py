@@ -3,7 +3,8 @@ import os
 import logging
 import json
 import base64
-import pysftp
+from paramiko import SSHClient, AutoAddPolicy
+
 
 app = Flask(__name__)
 logger = None
@@ -27,30 +28,47 @@ def decode():
     logger.info("Received %s entities from Sesam", len(entities))
 
     for entity in entities:
-        for k,v in entity.items():
+
+        for k, v in entity.items():
             if k == "employeenumber" and v is not None:
                 filename = v + ".png"
             else:
                 pass
             if k == "image" and v is not None:
-                img_data = v.encode()
                 logger.info("encoding image...")
+                img_data = v.encode()
+                client = SSHClient()
+                client.load_system_host_keys()
+                client.set_missing_host_key_policy(AutoAddPolicy())
                 try:
-                    # try disabling host key check
-                    cnopts = pysftp.CnOpts()
-                    cnopts.hostkeys = None
-                    with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
-                        try:
-                            with sftp.open("/" + filename, mode="rwb") as remote_file:
-                                remote_file.write(base64.decodebytes(img_data))
-                                sftp.close()
-                        except Exception as e:
-                            logger.error(e.args)
-                except Exception as e:
-                    logger.error(e.args)
-            else:
-                logger.info('no content in image, passing')
+                    client.connect(hostname=host, username=username, password=password)
+                    logger.info('connected')
+                    sftp = client.open_sftp()
+                    with sftp.open("/" + filename, mode="wb") as remote_file:
+                        remote_file.write(base64.decodebytes(img_data))
+                        logger.info('sent file %s', filename)
+                        client.close()
 
+                except Exception as e:
+                    logger.info("could not connect to " + os.environ.get('host') + ":  %s" % e)
+                    raise Exception("Problem connecting : '%s'" % e)
+                #try:
+                    # try disabling host key check
+                    # cnopts = pysftp.CnOpts()
+                    # cnopts.hostkeys = None
+
+                #     with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
+                #         try:
+                #             with sftp.open("/" + filename, mode="rwb") as remote_file:
+                #                 remote_file.write(base64.decodebytes(img_data))
+                #                 sftp.close()
+                #                 logger.info('sent file %s', filename)
+                #         except Exception as e:
+                #             logger.error(e.args)
+                # except Exception as e:
+                #     logger.error(e.args)
+            else:
+                pass
     return Response(
         print("sent encoded images to sFTP"),
         mimetype='application/json'
