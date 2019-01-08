@@ -21,6 +21,7 @@ stdout_handler.setFormatter(logging.Formatter(format_string))
 logger.addHandler(stdout_handler)
 logger.setLevel(logging.DEBUG)
 
+# Get POSTed images, and put them on an sftp
 @app.route("/decode", methods=["POST"])
 def decode():
     entities = request.get_json()
@@ -52,21 +53,7 @@ def decode():
                 except Exception as e:
                     logger.info("could not connect to " + os.environ.get('host') + ":  %s" % e)
                     raise Exception("Problem connecting : '%s'" % e)
-                #try:
-                    # try disabling host key check
-                    # cnopts = pysftp.CnOpts()
-                    # cnopts.hostkeys = None
 
-                #     with pysftp.Connection(host, username=username, password=password, cnopts=cnopts) as sftp:
-                #         try:
-                #             with sftp.open("/" + filename, mode="rwb") as remote_file:
-                #                 remote_file.write(base64.decodebytes(img_data))
-                #                 sftp.close()
-                #                 logger.info('sent file %s', filename)
-                #         except Exception as e:
-                #             logger.error(e.args)
-                # except Exception as e:
-                #     logger.error(e.args)
             else:
                 pass
     return Response(
