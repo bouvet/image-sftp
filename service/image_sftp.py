@@ -31,11 +31,11 @@ def decode():
     for entity in entities:
 
         for k, v in entity.items():
-            if k == "employeenumber" and v is not None:
-                filename = v + ".png"
+            if k == os.environ.get('filename') and v is not None:
+                filename = v + os.environ.get('fileextension')
             else:
                 pass
-            if k == "image" and v is not None:
+            if k == os.environ.get('imagedata') and v is not None:
                 logger.info("encoding image...")
                 img_data = v.encode()
                 client = SSHClient()
