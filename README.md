@@ -2,7 +2,7 @@
 Small service to send images to an sftp from base64 encoded images in Sesam
 
 System config:
-
+```json
 {
   "_id": "image-sftp",
   "type": "system:microservice",
@@ -19,6 +19,8 @@ System config:
     "port": 5000
   }
 }
+```
+
 
 It's set to add missing hostkeys if missing.
 
