@@ -4,10 +4,9 @@ COPY ./service /service
 
 RUN apk update
 RUN apk add openssl-dev libffi-dev musl-dev gcc make
-
+RUN apk add build-base jpeg-dev zlib-dev
+ENV LIBRARY_PATH=/lib:/usr/lib
 RUN pip install --upgrade pip
-
-COPY ./service/requirements.txt /service/requirements.txt
 
 RUN pip install -r /service/requirements.txt
 
