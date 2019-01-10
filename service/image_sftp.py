@@ -3,7 +3,9 @@ import os
 import logging
 import json
 import base64
+import io
 from paramiko import SSHClient, AutoAddPolicy
+from PIL import Image
 
 
 app = Flask(__name__)
@@ -32,12 +34,15 @@ def decode():
 
         for k, v in entity.items():
             if k == os.environ.get('filename') and v is not None:
-                filename = v + os.environ.get('fileextension')
+                filename = v
             else:
                 pass
             if k == os.environ.get('imagedata') and v is not None:
                 logger.info("encoding image...")
                 img_data = v.encode()
+                image_stream = io.BytesIO(base64.decodebytes(img_data))
+                image = Image.open(image_stream)
+                filetype = image.format
                 client = SSHClient()
                 client.load_system_host_keys()
                 client.set_missing_host_key_policy(AutoAddPolicy())
@@ -45,9 +50,10 @@ def decode():
                     client.connect(hostname=host, username=username, password=password)
                     logger.info('connected')
                     sftp = client.open_sftp()
-                    with sftp.open("/" + filename, mode="wb") as remote_file:
+                    full_filename = filename + "." + filetype
+                    with sftp.open("/" + full_filename, mode="wb") as remote_file:
                         remote_file.write(base64.decodebytes(img_data))
-                        logger.info('sent file %s', filename)
+                        logger.info('sent file %s', full_filename)
                         client.close()
 
                 except Exception as e:
