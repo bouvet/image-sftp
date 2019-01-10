@@ -12,7 +12,6 @@ System config:
       "password": "$SECRET(sftp-password)",
       "username": "$ENV(sftp-username)",
       "filename": "what property should be used as filename",
-      "fileextension": ".png/.jpeg/.tif/.gif",
       "imagedata": "Property of your image data"
     },
     "image": "sesam-community/image-sftp:latest",
