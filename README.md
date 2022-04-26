@@ -12,9 +12,10 @@ System config:
       "password": "$SECRET(sftp-password)",
       "username": "$ENV(sftp-username)",
       "filename": "what property should be used as filename",
-      "imagedata": "Property of your image data"
+      "imagedata": "Property of your image data",
+      "ftp-port": "Port to user for ftp"
     },
-    "image": "sesam-community/image-sftp:latest",
+    "image": "bouvetasa/image-sftp:latest",
     "port": 5000
   }
 }
