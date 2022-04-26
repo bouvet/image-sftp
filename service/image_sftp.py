@@ -6,6 +6,7 @@ import base64
 import io
 from paramiko import SSHClient, AutoAddPolicy
 from PIL import Image
+import cherrypy
 
 
 app = Flask(__name__)
@@ -69,4 +70,17 @@ def decode():
     )
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', threaded=True, port=os.environ.get('port',5000))
+    cherrypy.tree.graft(app, '/')
+
+    # Set the configuration of the web server to production mode
+    cherrypy.config.update({
+        'environment': 'production',
+        'engine.autoreload_on': False,
+        'log.screen': True,
+        'server.socket_port': 5000,
+        'server.socket_host': '0.0.0.0'
+    })
+
+    # Start the CherryPy WSGI web server
+    cherrypy.engine.start()
+    cherrypy.engine.block()
