@@ -17,7 +17,7 @@ logger = logging.getLogger('images-sftp')
 host = os.environ.get('host')
 username = os.environ.get('username')
 password = os.environ.get('password')
-port = os.environ.get('ftp-port', 22)
+port = os.environ.get('ftpport', 22)
 
 # Log to stdout
 stdout_handler = logging.StreamHandler()
@@ -50,7 +50,7 @@ def decode():
                 client.set_missing_host_key_policy(AutoAddPolicy())
                 try:
                     client.connect(hostname=host, port=port, username=username, password=password)
-                    logger.info('connected')
+                    logger.info("connected to " + host + ":" + port)
                     sftp = client.open_sftp()
                     full_filename = filename + "." + filetype
                     with sftp.open("/" + full_filename, mode="wb") as remote_file:
