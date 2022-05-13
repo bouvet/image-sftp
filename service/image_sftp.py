@@ -59,7 +59,7 @@ def decode():
                         client.close()
 
                 except Exception as e:
-                    logger.info("could not connect to " + os.environ.get('host') + ":  %s" % e)
+                    logger.info("could not connect to " + host + ":" + port + ":  %s" % e)
                     raise Exception("Problem connecting : '%s'" % e)
 
             else:
