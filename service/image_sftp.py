@@ -55,6 +55,8 @@ def decode():
                     full_filename = filename + "." + filetype
                     with sftp.open("/" + full_filename, mode="wb") as remote_file:
                         remote_file.write(base64.decodebytes(img_data))
+                        remote_file.flush()
+                        remote_file.close()
                         logger.info('sent file %s', full_filename)
                         client.close()
 
